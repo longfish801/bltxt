@@ -72,7 +72,7 @@ class BLtxtMaker implements BLtxtMakerIF {
 	void createBlockTerminate(int lineNo){
 		// ブロック要素を閉じます
 		if (!(blockLevels.last() instanceof BLBlock)) throw new InternalError("含意タグが開始していません。タグ名=${blockLevels.last().tag} 行番号=${lineNo}");
-		blockLevels.pop();
+		blockLevels.removeLast();
 		// 段落要素を開きます
 		openBlock(new BLPara(lineNo));
 	}
@@ -96,7 +96,7 @@ class BLtxtMaker implements BLtxtMakerIF {
 		// ブロック要素を閉じます
 		if (!(blockLevels.last() instanceof BLBlock)) throw new ParseException("行範囲タグの終了タグと、開始タグの種類が一致しません。開始タグ名=${blockLevels.last().tag} 終了タグ名=${tagName} 行番号=${blockLevels.last().lineNo},${lineNo}");
 		if (blockLevels.last().tag != tagName) throw new ParseException("行範囲タグの終了タグと開始タグの名前が一致しません。開始タグ名=${blockLevels.last().tag} 終了タグ名=${tagName} 行番号=${blockLevels.last().lineNo},${lineNo}");
-		blockLevels.pop();
+		blockLevels.removeLast();
 		// 段落要素を開きます
 		openBlock(new BLPara(lineNo));
 	}
@@ -116,7 +116,7 @@ class BLtxtMaker implements BLtxtMakerIF {
 	void createMetaTerminate(int lineNo){
 		// メタ要素を閉じます
 		if (!(blockLevels.last() instanceof BLMeta)) throw new InternalError("含意タグが開始していません。タグ名=${blockLevels.last().tag} 行番号=${lineNo}");
-		blockLevels.pop();
+		blockLevels.removeLast();
 		// 段落要素を開きます
 		openBlock(new BLPara(lineNo));
 	}
@@ -140,7 +140,7 @@ class BLtxtMaker implements BLtxtMakerIF {
 		// メタ要素を閉じます
 		if (!(blockLevels.last() instanceof BLMeta)) throw new ParseException("含意範囲タグの終了タグと、開始タグの種類が一致しません。開始タグ名=${blockLevels.last().tag} 終了タグ名=${tagName} 行番号=${blockLevels.last().lineNo},${lineNo}");
 		if (blockLevels.last().tag != tagName) throw new ParseException("含意範囲タグの終了タグと開始タグの名前が一致しません。開始タグ名=${blockLevels.last().tag} 終了タグ名=${tagName} 行番号=${blockLevels.last().lineNo},${lineNo}");
-		blockLevels.pop();
+		blockLevels.removeLast();
 		// 段落要素を開きます
 		openBlock(new BLPara(lineNo));
 	}
@@ -163,7 +163,7 @@ class BLtxtMaker implements BLtxtMakerIF {
 		// 行タグあるいは含意タグならば、段落要素を閉じます
 		if (singleLineNo == lineNo) closePara();
 		// ライン要素を閉じます
-		inlineLevels.pop();
+		inlineLevels.removeLast();
 		if (inlineLevels.size() > 0) throw new ParseException("行範囲タグの閉じ忘れがあります。タグ名=${inlineLevels.last().tag} 行番号=${lineNo}");
 	}
 	
@@ -171,7 +171,7 @@ class BLtxtMaker implements BLtxtMakerIF {
 	void createInline(String tagName, int lineNo){
 		LOG.trace('*createInline called tagName={} lineNo={}', tagName, lineNo);
 		openInline(new BLInline(tagName, lineNo));
-		inlineLevels.pop();
+		inlineLevels.removeLast();
 	}
 	
 	/** {@inheritDoc} */
@@ -185,7 +185,7 @@ class BLtxtMaker implements BLtxtMakerIF {
 		LOG.trace('*createInlineEnd called tagName={} lineNo={}', tagName, lineNo);
 		if (inlineLevels.size() <= 1) throw new ParseException("開始タグより先に終了タグが記述されています。タグ名=${tagName} 行番号=${lineNo}");
 		if (inlineLevels.last().tag != tagName) throw new ParseException("終了タグと開始タグの名前が一致しません。終了タグ名=${tagName} 開始タグ名=${inlineLevels.last().tag} 行番号=${lineNo}");
-		inlineLevels.pop();
+		inlineLevels.removeLast();
 	}
 	
 	/** {@inheritDoc} */
@@ -253,8 +253,8 @@ class BLtxtMaker implements BLtxtMakerIF {
 	 */
 	protected void closePara(){
 		if (blockLevels.last() instanceof BLPara){
-			BLPara para = blockLevels.pop();
-			if (para.nodes.size() == 0) para.parent.nodes.pop();
+			BLPara para = blockLevels.removeLast();
+			if (para.nodes.size() == 0) para.parent.nodes.removeLast();
 		} else {
 			String blockLevelStatus = blockLevels.collect { "${it.class.simpleName}#${it.tag}" }.join(', ');
 			LOG.debug('*closePara blockLevels={}', blockLevelStatus);

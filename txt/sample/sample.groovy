@@ -1,5 +1,5 @@
 @GrabResolver(name = 'longfish801 github repositry', root = 'https://longfish801.github.io/maven/')
-@Grab('io.github.longfish801:bltxt:0.1.00')
+@Grab('io.github.longfish801:bltxt:0.2.00')
 @GrabExclude('org.codehaus.groovy:groovy-all')
 
 import io.github.longfish801.bltxt.BLtxt;
