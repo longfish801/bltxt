@@ -14,8 +14,8 @@ import io.github.longfish801.bltxt.node.BLRoot;
 import io.github.longfish801.bltxt.parser.BLtxtParser;
 import io.github.longfish801.bltxt.parser.ParseException;
 import io.github.longfish801.bltxt.parser.TokenMgrError;
-import io.github.longfish801.shared.lang.ArgmentChecker;
-import io.github.longfish801.shared.util.ClassSlurper;
+import io.github.longfish801.shared.ArgmentChecker;
+import io.github.longfish801.shared.ExchangeResource;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 @Slf4j('LOG')
 class BLtxt {
 	/** ConfigObject */
-	protected static final ConfigObject constants = ClassSlurper.getConfig(BLtxt.class);
+	static final ConfigObject cnst = ExchangeResource.config(BLtxt.class);
 	/** ルート要素 */
 	BLRoot root = null;
 	/** 解析内容の書込み */
@@ -44,7 +44,7 @@ class BLtxt {
 	/**
 	 * ファイル内容をBLtxt文書とみなして解析結果を保持するコンストラクタです。
 	 * @param file ファイル
-	 * @exception ParseException 対象文字列がBLtxt記法に違反しています。
+	 * @throws ParseException 対象文字列がBLtxt記法に違反しています。
 	 */
 	BLtxt(File file){
 		root = new FileReader(file).withCloseable { parse(it) };
@@ -53,7 +53,7 @@ class BLtxt {
 	/**
 	 * URL先の内容をBLtxt文書とみなして解析結果を保持するコンストラクタです。
 	 * @param url URL
-	 * @exception ParseException 対象文字列がBLtxt記法に違反しています。
+	 * @throws ParseException 対象文字列がBLtxt記法に違反しています。
 	 */
 	BLtxt(URL url){
 		root = new InputStreamReader(url.openStream()).withCloseable { parse(it) };
@@ -62,7 +62,7 @@ class BLtxt {
 	/**
 	 * BLtxt記法の文字列を解析し結果を保持するコンストラクタです。
 	 * @param text 文字列
-	 * @exception ParseException 対象文字列がBLtxt記法に違反しています。
+	 * @throws ParseException 対象文字列がBLtxt記法に違反しています。
 	 */
 	BLtxt(String text){
 		root = new StringReader(text).withCloseable { parse(it) };
@@ -71,7 +71,7 @@ class BLtxt {
 	/**
 	 * リーダからBLtxt記法の文字列を読みこみ、解析結果を保持するコンストラクタです。
 	 * @param reader リーダ
-	 * @exception ParseException 対象文字列がBLtxt記法に違反しています。
+	 * @throws ParseException 対象文字列がBLtxt記法に違反しています。
 	 */
 	BLtxt(Reader reader){
 		root = parse(reader);
@@ -81,7 +81,7 @@ class BLtxt {
 	 * 指定されたリーダからBLtxt記法の文字列を読みこみ、解析結果を返します。
 	 * @param reader リーダ
 	 * @return 宣言要素
-	 * @exception ParseException 対象文字列がBLtxt記法に違反しています。
+	 * @throws ParseException 対象文字列がBLtxt記法に違反しています。
 	 */
 	protected BLRoot parse(Reader reader){
 		BLRoot root = null;
@@ -108,7 +108,7 @@ class BLtxt {
 		if (matcher.size() == 0) return "詳細=${replaceByteCode(exc.message)}";
 		int lineNum = Integer.parseInt(matcher[0][1]);
 		List lines = leakedWriter.toString().split(/[\r\n]+/);
-		String lastLines = (lines.take(lineNum).takeRight(constants.parser.lineNum) + '-----').join(System.getProperty('line.separator'));
+		String lastLines = (lines.take(lineNum).takeRight(cnst.parser.lineNum) + '-----').join(System.getProperty('line.separator'));
 		return "詳細=${replaceByteCode(exc.message)} エラー発生行付近=${lastLines}";
 	}
 	
@@ -143,7 +143,7 @@ class BLtxt {
 		StringWriter writer = new StringWriter();
 		MarkupBuilder builder = new MarkupBuilder(writer);
 		builder.doubleQuotes = true;
-		builder.mkp.xmlDeclaration(constants.xmlDec);
+		builder.mkp.xmlDeclaration(cnst.xmlDec);
 		root.writeXml(builder);
 		return writer.toString();
 	}

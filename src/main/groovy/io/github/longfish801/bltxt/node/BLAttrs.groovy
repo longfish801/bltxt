@@ -7,7 +7,7 @@ package io.github.longfish801.bltxt.node;
 
 import groovy.util.logging.Slf4j;
 import groovy.xml.MarkupBuilder;
-import io.github.longfish801.shared.lang.ArgmentChecker;
+import io.github.longfish801.shared.ArgmentChecker;
 
 /**
  * BLtxt文書の属性リストです。
