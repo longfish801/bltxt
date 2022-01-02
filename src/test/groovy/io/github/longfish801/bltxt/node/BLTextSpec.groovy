@@ -3,63 +3,56 @@
  *
  * Copyright (C) io.github.longfish801 All Rights Reserved.
  */
-package io.github.longfish801.bltxt.node;
+package io.github.longfish801.bltxt.node
 
-import groovy.util.logging.Slf4j;
-import spock.lang.Specification;
+import groovy.util.logging.Slf4j
+import spock.lang.Specification
 
 /**
  * BLTextのテスト。
- * @version 1.0.00 2017/08/03
+ * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')
 class BLTextSpec extends Specification {
-	def 'コンストラクタ'(){
-		when:
-		new BLText('', 1);
-		then:
-		thrown(IllegalArgumentException);
-	}
-	
-	def '属性リストを返します'(){
+	def 'getAttrs'(){
 		given:
-		BLText text;
+		BLText text
 		
 		when:
-		text = new BLText('テスト', 1);
+		text = new BLText('テスト', 1)
 		then:
-		text.attrs == null;
+		text.attrs == null
 	}
 	
-	def '下位ノードを返します'(){
+	def 'getNodes'(){
 		given:
-		BLText text;
+		BLText text
 		
 		when:
-		text = new BLText('テスト', 1);
+		text = new BLText('テスト', 1)
 		then:
-		text.nodes == null;
+		text.nodes == null
 	}
 	
-	def '下位ノードを追加します'(){
+	def 'leftShift'(){
 		given:
-		BLText text;
+		BLText text
 		
 		when:
-		text = new BLText('テスト', 1);
-		text << new BLText('テスト２', 1);
+		text = new BLText('テスト', 1)
+		text << new BLText('テスト２', 1)
 		then:
-		thrown(UnsupportedOperationException);
+		thrown(UnsupportedOperationException)
 	}
 	
-	def 'BLtxt記法上エスケープが必要な文字があればエスケープします'(){
+	def 'escape'(){
 		given:
-		BLText text;
+		BLText text
 		
 		when:
-		text = new BLText('【ここから：そして：￥ここまで】', 1);
+		text = new BLText('【ここから：そして：ここまで】', 1)
 		then:
-		text.toString() == '￥【ここから：そして：￥￥ここまで￥】';
+		text.toString() == '【＿ここから：そして：ここまで＿】'
 	}
 }

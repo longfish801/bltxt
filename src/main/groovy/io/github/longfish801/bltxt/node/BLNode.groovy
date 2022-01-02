@@ -3,40 +3,39 @@
  *
  * Copyright (C) io.github.longfish801 All Rights Reserved.
  */
-package io.github.longfish801.bltxt.node;
+package io.github.longfish801.bltxt.node
 
-import groovy.util.logging.Slf4j;
-import groovy.xml.MarkupBuilder;
-import io.github.longfish801.shared.ArgmentChecker;
+import groovy.util.logging.Slf4j
+import groovy.xml.MarkupBuilder
 
 /**
  * BLtxt文書のノードを表す抽象クラスです。
- * @version 1.0.00 2017/08/02
+ * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')
 abstract class BLNode {
 	/** タグ */
-	String tag = null;
+	String tag = null
 	/** 属性リスト */
-	BLAttrs<String> blAttrs = new BLAttrs<String>();
+	BLAttrs<String> blAttrs = new BLAttrs<String>()
 	/** 上位ノード */
-	BLNode parent = null;
+	BLNode parent = null
 	/** 下位ノードリスト */
-	List<BLNode> blNodes = [];
+	List<BLNode> blNodes = []
 	/** 行番号 */
-	int lineNo = 0;
+	int lineNo = 0
 	/** 通番 */
-	int serialNo = 0;
+	int serialNo = 0
 	/** 下位要素として可能なクラスのリスト */
-	List<Class> lowerClass = [];
+	List<Class> lowerClass = []
 	
 	/**
 	 * 属性リストを返します。
 	 * @return 属性リスト
 	 */
 	BLAttrs<String> getAttrs(){
-		return blAttrs;
+		return blAttrs
 	}
 	
 	/**
@@ -44,7 +43,7 @@ abstract class BLNode {
 	 * @return 下位ノードリスト
 	 */
 	List<BLNode> getNodes(){
-		return blNodes;
+		return blNodes
 	}
 	
 	/**
@@ -53,11 +52,12 @@ abstract class BLNode {
 	 * @return 本インスタンス
 	 */
 	BLNode leftShift(BLNode subNode){
-		ArgmentChecker.checkNotNull('下位ノード', subNode);
-		ArgmentChecker.checkClasses('下位ノード', subNode, this.validLowerClasses);
-		subNode.parent = this;
-		nodes << subNode;
-		return this;
+		if (validLowerClasses.every { !(it.isInstance(subNode)) }){
+			throw new IllegalArgumentException("下位ノードが妥当なクラスではありません。下位ノードのクラス=${subNode.getClass()} 妥当なクラス候補=${validLowerClasses}");
+		}
+		subNode.parent = this
+		nodes << subNode
+		return this
 	}
 	
 	/**
@@ -65,7 +65,7 @@ abstract class BLNode {
 	 * @return 下位ノードとして可能なクラスの候補
 	 */
 	static List<Class> getValidLowerClasses() {
-		return [];
+		return []
 	}
 	
 	/**
@@ -73,11 +73,11 @@ abstract class BLNode {
 	 * @return XML形式で表現した文字列
 	 */
 	String toXml(){
-		StringWriter writer = new StringWriter();
-		MarkupBuilder builder = new MarkupBuilder(writer);
-		builder.doubleQuotes = true;
-		this.writeXml(builder);
-		return writer.toString();
+		StringWriter writer = new StringWriter()
+		MarkupBuilder builder = new MarkupBuilder(writer)
+		builder.doubleQuotes = true
+		this.writeXml(builder)
+		return writer.toString()
 	}
 	
 	/**
@@ -85,12 +85,12 @@ abstract class BLNode {
 	 * @param builder MarkupBuilder
 	 */
 	void writeXml(MarkupBuilder builder){
-		Map attributes = [:];
-		if (tag != null && !tag.empty) attributes['tag'] = tag;
-		if (lineNo > 0) attributes['lnum'] = lineNo;
-		if (serialNo > 0) attributes['snum'] = serialNo;
+		Map attributes = [:]
+		if (tag != null && !tag.empty) attributes['tag'] = tag
+		if (lineNo > 0) attributes['lnum'] = lineNo
+		if (serialNo > 0) attributes['snum'] = serialNo
 		builder."${xmlTag}"(attributes){
-			if (attrs != null) attrs.writeXml(builder);
+			if (attrs != null) attrs.writeXml(builder)
 			if (nodes != null && nodes.size() > 0){
 				nodes.each { BLNode node -> node.writeXml(builder) }
 			}
@@ -102,6 +102,6 @@ abstract class BLNode {
 	 * @return XMLとしてのタグ名
 	 */
 	static String getXmlTag(){
-		return '';
+		return ''
 	}
 }

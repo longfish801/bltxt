@@ -3,47 +3,55 @@
  *
  * Copyright (C) io.github.longfish801 All Rights Reserved.
  */
-package io.github.longfish801.bltxt;
+package io.github.longfish801.bltxt
 
-import groovy.util.logging.Slf4j;
-import io.github.longfish801.shared.PackageDirectory;
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import groovy.util.logging.Slf4j
+import io.github.longfish801.bltxt.BLtxtMsg as msgs
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * BLtxtのテスト。
- * @version 1.0.00 2017/08/03
+ * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')
 class BLtxtSpec extends Specification {
 	/** ファイル入出力のテスト用フォルダ */
-	static final File testDir = PackageDirectory.deepDir('src/test/resources', BLtxtSpec.class);
+	static final File testDir = new File('src/test/resources/io/github/longfish801/bltxt/BLtxtSpec')
 	
-	def 'ファイル内容をBLtxt文書とみなして解析結果を保持するコンストラクタです'(){
+	def 'BLtxt - file'(){
 		given:
-		BLtxt bltxt = null;
+		BLtxt bltxt = null
 		
 		when:
-		bltxt = new BLtxt(new File(testDir, 'target.txt'));
+		bltxt = new BLtxt(new File(testDir, 'target.txt'))
 		then:
-		bltxt.toString() == 'これがテストです。';
+		bltxt.toString() == 'これがテストです。'
 	}
 	
-	def 'BLtxt記法の文字列を解析し結果を保持するコンストラクタです'(){
+	def 'BLtxt - String'(){
 		given:
-		BLtxt bltxt = null;
+		BLtxt bltxt = null
 		
 		when:
-		bltxt = new BLtxt('これはテストです。');
+		bltxt = new BLtxt('これはテストです。')
 		then:
-		bltxt.toString() == 'これはテストです。';
+		bltxt.toString() == 'これはテストです。'
 	}
 	
 	@Unroll
-	def 'XML形式で表現した文字列を返します'(){
+	def 'parse, toXml'(){
+		given:
+		Closure convert = { String _dir, String _fname ->
+			return new BLtxt(new File(testDir, "${_dir}/${_fname}.txt")).toXml()
+		}
+		Closure getText = { String _dir, String _fname ->
+			return new File(testDir, "${_dir}/${_fname}.xml").getText()
+		}
+		
 		expect:
-		new BLtxt(new File(testDir, "${dir}/${fname}.txt")).toXml() == new File(testDir, "${dir}/${fname}.xml").getText();
+		convert(dir, fname) == getText(dir, fname)
 		
 		where:
 		dir			| fname
@@ -59,27 +67,27 @@ class BLtxtSpec extends Specification {
 		'valiation'	| '03'
 	}
 	
-	def 'XML形式で表現した文字列を返します（複雑な場合）'(){
+	def 'parse, toXml - complex'(){
 		// Unrollで実行すると OutOfMemoryErrorが発生するため、独立して実施します。
 		given:
-		String text;
-		String result;
-		String expected;
+		String text
+		String result
+		String expected
 		
 		when:
-		text = new File(testDir, 'complex/blxml.txt').getText();
-		result = new BLtxt(text).toXml();
-		expected = new File(testDir, 'complex/blxml.xml').getText();
-		LOG.debug('result=[{}]', result);
+		text = new File(testDir, 'complex/blxml.txt').getText()
+		result = new BLtxt(text).toXml()
+		expected = new File(testDir, 'complex/blxml.xml').getText()
+		LOG.debug('result=[{}]', result)
 		
 		then:
-		result == expected;
+		result == expected
 	}
 	
-	def '直近まで解析していた行を返します'(){
+	def 'createErrorMessageDetail'(){
 		given:
-		String expected = '''\
-			構文誤りのためBLtxt文書の解析に失敗しました。詳細=Encountered " <NEWLINE> "\\n "" at line 6, column 2.
+		String detail = """\
+			Encountered " <NEWLINE> "\\n "" at line 6, column 2.
 			Was expecting one of:
 			    <SAFE_TXT> ...
 			    <SAFE_TXT> ...
@@ -87,12 +95,14 @@ class BLtxtSpec extends Specification {
 			    <SAFE_TXT> ...
 			    <SAFE_TXT> ...
 			    <SAFE_TXT> ...
-			     エラー発生行付近=bbb
+			    -----
+			bbb
 			ccc
 			ddd
 			eee
 			【
-			-----'''.stripIndent().replaceAll("\n", System.getProperty('line.separator'));
+			-----""".stripIndent().replaceAll("\n", System.lineSeparator())
+		String expected = String.format(msgs.exc.failedParseSyntax, detail)
 		String target = '''\
 			aaa
 			bbb
@@ -103,14 +113,14 @@ class BLtxtSpec extends Specification {
 			fff
 			ggg
 			hhh
-			'''.stripIndent();
-		BLtxt bltxt = null;
-		BLtxt.BLtxtParseException exc = null;
+			'''.stripIndent()
+		BLtxt bltxt = null
+		BLtxtParseException exc = null
 		
 		when:
-		bltxt = new BLtxt(target);
+		bltxt = new BLtxt(target)
 		then:
-		exc = thrown(BLtxt.BLtxtParseException);
-		exc.message == expected;
+		exc = thrown(BLtxtParseException)
+		exc.message == expected
 	}
 }

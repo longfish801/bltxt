@@ -1,5 +1,5 @@
 /**
- * BLtxt記法の解析のためのパッケージです。
+ * bltxt記法の解析のためのパッケージです。
  * @author io.github.longfish801
  */
-package io.github.longfish801.bltxt;
+package io.github.longfish801.bltxt

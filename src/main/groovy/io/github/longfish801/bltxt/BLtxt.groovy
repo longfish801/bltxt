@@ -3,96 +3,92 @@
  *
  * Copyright (C) io.github.longfish801 All Rights Reserved.
  */
-package io.github.longfish801.bltxt;
+package io.github.longfish801.bltxt
 
-import groovy.transform.InheritConstructors;
-import groovy.util.logging.Slf4j;
-import groovy.xml.MarkupBuilder;
-import io.github.longfish801.bltxt.io.LeakedReader;
-import io.github.longfish801.bltxt.node.BLNode;
-import io.github.longfish801.bltxt.node.BLRoot;
-import io.github.longfish801.bltxt.parser.BLtxtParser;
-import io.github.longfish801.bltxt.parser.ParseException;
-import io.github.longfish801.bltxt.parser.TokenMgrError;
-import io.github.longfish801.shared.ArgmentChecker;
-import io.github.longfish801.shared.ExchangeResource;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import groovy.util.logging.Slf4j
+import groovy.xml.MarkupBuilder
+import io.github.longfish801.bltxt.BLtxtConst as cnst
+import io.github.longfish801.bltxt.BLtxtMsg as msgs
+import io.github.longfish801.bltxt.node.BLNode
+import io.github.longfish801.bltxt.node.BLRoot
+import io.github.longfish801.bltxt.parser.BLtxtParser
+import io.github.longfish801.bltxt.parser.ParseException
+import io.github.longfish801.bltxt.parser.TokenMgrError
+import java.util.regex.Pattern
+import java.util.regex.Matcher
 
 /**
  * BLtxt文書です。
- * @version 1.0.00 2017/08/02
+ * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')
 class BLtxt {
-	/** ConfigObject */
-	static final ConfigObject cnst = ExchangeResource.config(BLtxt.class);
 	/** ルート要素 */
-	BLRoot root = null;
+	BLRoot root = null
 	/** 解析内容の書込み */
-	StringWriter leakedWriter = new StringWriter();
+	StringWriter leakedWriter = new StringWriter()
 	
 	/**
 	 * ルート要素を指定するコンストラクタです。
 	 * @param root ルート要素
 	 */
 	BLtxt(BLRoot root){
-		this.root = root;
+		this.root = root
 	}
 	
 	/**
 	 * ファイル内容をBLtxt文書とみなして解析結果を保持するコンストラクタです。
 	 * @param file ファイル
-	 * @throws ParseException 対象文字列がBLtxt記法に違反しています。
+	 * @throws ParseException 対象文字列がbltxt記法に違反しています。
 	 */
 	BLtxt(File file){
-		root = new FileReader(file).withCloseable { parse(it) };
+		root = new FileReader(file).withCloseable { parse(it) }
 	}
 	
 	/**
 	 * URL先の内容をBLtxt文書とみなして解析結果を保持するコンストラクタです。
 	 * @param url URL
-	 * @throws ParseException 対象文字列がBLtxt記法に違反しています。
+	 * @throws ParseException 対象文字列がbltxt記法に違反しています。
 	 */
 	BLtxt(URL url){
-		root = new InputStreamReader(url.openStream()).withCloseable { parse(it) };
+		root = new InputStreamReader(url.openStream()).withCloseable { parse(it) }
 	}
 	
 	/**
-	 * BLtxt記法の文字列を解析し結果を保持するコンストラクタです。
+	 * bltxt記法の文字列を解析し結果を保持するコンストラクタです。
 	 * @param text 文字列
-	 * @throws ParseException 対象文字列がBLtxt記法に違反しています。
+	 * @throws ParseException 対象文字列がbltxt記法に違反しています。
 	 */
 	BLtxt(String text){
-		root = new StringReader(text).withCloseable { parse(it) };
+		root = new StringReader(text).withCloseable { parse(it) }
 	}
 	
 	/**
-	 * リーダからBLtxt記法の文字列を読みこみ、解析結果を保持するコンストラクタです。
+	 * リーダからbltxt記法の文字列を読みこみ、解析結果を保持するコンストラクタです。
 	 * @param reader リーダ
-	 * @throws ParseException 対象文字列がBLtxt記法に違反しています。
+	 * @throws ParseException 対象文字列がbltxt記法に違反しています。
 	 */
 	BLtxt(Reader reader){
-		root = parse(reader);
+		root = parse(reader)
 	}
 	
 	/**
-	 * 指定されたリーダからBLtxt記法の文字列を読みこみ、解析結果を返します。
+	 * 指定されたリーダからbltxt記法の文字列を読みこみ、解析結果を返します。
 	 * @param reader リーダ
 	 * @return 宣言要素
-	 * @throws ParseException 対象文字列がBLtxt記法に違反しています。
+	 * @throws ParseException 対象文字列がbltxt記法に違反しています。
 	 */
 	protected BLRoot parse(Reader reader){
-		BLRoot root = null;
+		BLRoot root = null
 		try {
-			root = new BLtxtParser(new LeakedReader(reader, leakedWriter)).parse(new BLtxtMaker());
+			root = new BLtxtParser(new LeakedReader(reader, leakedWriter)).parse(new BLtxtMaker())
 		} catch (TokenMgrError exc){
-			throw new BLtxtParseException("字句誤りのためBLtxt文書の解析に失敗しました。${createErrorMessageDtail(exc)}", exc);
+			throw new BLtxtParseException(String.format(msgs.exc.failedParseLexical, createErrorMessageDetail(exc)), exc)
 		} catch (ParseException exc){
-			throw new BLtxtParseException("構文誤りのためBLtxt文書の解析に失敗しました。${createErrorMessageDtail(exc)}", exc);
+			throw new BLtxtParseException(String.format(msgs.exc.failedParseSyntax, createErrorMessageDetail(exc)), exc)
 		}
-		return root;
+		return root
 	}
 	
 	/**
@@ -103,28 +99,31 @@ class BLtxt {
 	 * どちらの場合も、例外のメッセージは16進数表記の文字を本来の文字に置換します。
 	 * @return エラーが発生した該当行を含むエラーメッセージ
 	 */
-	String createErrorMessageDtail(Exception exc){
-		Matcher matcher = (exc.message =~ /at line ([\d]+)/);
-		if (matcher.size() == 0) return "詳細=${replaceByteCode(exc.message)}";
-		int lineNum = Integer.parseInt(matcher[0][1]);
-		List lines = leakedWriter.toString().split(/[\r\n]+/);
-		String lastLines = (lines.take(lineNum).takeRight(cnst.parser.lineNum) + '-----').join(System.getProperty('line.separator'));
-		return "詳細=${replaceByteCode(exc.message)} エラー発生行付近=${lastLines}";
+	String createErrorMessageDetail(Exception exc){
+		Matcher matcher = (exc.message =~ /at line ([\d]+)/)
+		if (matcher.size() == 0) return replaceByteCode(exc.message)
+		int lineNum = Integer.parseInt(matcher[0][1])
+		List lines = leakedWriter.toString().split(/[\r\n]+/)
+		List messages = []
+		messages << replaceByteCode(exc.message) + '-----'
+		messages += lines.take(lineNum).takeRight(cnst.parser.lineNum)
+		messages << '-----'
+		return messages.join(System.lineSeparator())
 	}
 	
 	/**
-	 * 16進数表記の文字を、本来の文字に置換します。
-	 * @param message 16進数表記の文字を含む文字列
-	 * @return 16進数表記の文字を本来の文字に置換した文字列
+	 * 16進数表記のエスケープシーケンス(\\uhhhh)を、本来の文字に置換します。
+	 * @param message 16進数表記のエスケープシーケンスを含む文字列
+	 * @return 16進数表記のエスケープシーケンスを本来の文字に置換した文字列
 	 */
 	static String replaceByteCode(String message){
-		Pattern pattern = Pattern.compile("\\\\u([a-f\\d]{4})");
-		Matcher matcher = pattern.matcher(message);
+		Pattern pattern = Pattern.compile("\\\\u([a-f\\d]{4})")
+		Matcher matcher = pattern.matcher(message)
 		while (matcher.find()){
-			char[] chars = Character.toChars(Integer.parseInt(matcher.group(1), 16));
-			message = message.replaceFirst(Pattern.quote(matcher.group()), String.valueOf(chars));
+			char[] chars = Character.toChars(Integer.parseInt(matcher.group(1), 16))
+			message = message.replaceFirst(Pattern.quote(matcher.group()), String.valueOf(chars))
 		}
-		return message;
+		return message
 	}
 	
 	/**
@@ -132,7 +131,7 @@ class BLtxt {
 	 * @return 文字列
 	 */
 	String toString(){
-		return root.toString();
+		return root.toString()
 	}
 	
 	/**
@@ -140,12 +139,12 @@ class BLtxt {
 	 * @return XML形式で表現した文字列
 	 */
 	String toXml(){
-		StringWriter writer = new StringWriter();
-		MarkupBuilder builder = new MarkupBuilder(writer);
-		builder.doubleQuotes = true;
-		builder.mkp.xmlDeclaration(cnst.xmlDec);
-		root.writeXml(builder);
-		return writer.toString();
+		StringWriter writer = new StringWriter()
+		MarkupBuilder builder = new MarkupBuilder(writer)
+		builder.doubleQuotes = true
+		builder.mkp.xmlDeclaration(cnst.xmlDec)
+		root.writeXml(builder)
+		return writer.toString()
 	}
 	
 	/**
@@ -154,8 +153,7 @@ class BLtxt {
 	 * @return タグ名別のノード一覧
 	 */
 	Map<String, List<BLNode>> grepNodes(String xmlTag){
-		ArgmentChecker.checkNotNull('XMLタグ名', xmlTag);
-		return root.index[xmlTag];
+		return root.index[xmlTag]
 	}
 	
 	/**
@@ -165,13 +163,6 @@ class BLtxt {
 	 * @return ノード一覧
 	 */
 	List<BLNode> grepNodes(String xmlTag, String tag){
-		ArgmentChecker.checkNotNull('タグ名', tag);
-		return grepNodes(xmlTag)?.get(tag);
+		return grepNodes(xmlTag)?.get(tag)
 	}
-	
-	/**
-	 * BLtxt文書の解析失敗を表す例外クラスです。
-	 */
-	@InheritConstructors
-	class BLtxtParseException extends Exception { }
 }

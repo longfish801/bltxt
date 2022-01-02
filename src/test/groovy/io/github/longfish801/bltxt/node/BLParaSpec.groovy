@@ -3,53 +3,53 @@
  *
  * Copyright (C) io.github.longfish801 All Rights Reserved.
  */
-package io.github.longfish801.bltxt.node;
+package io.github.longfish801.bltxt.node
 
-import groovy.util.logging.Slf4j;
-import spock.lang.Specification;
+import groovy.util.logging.Slf4j
+import spock.lang.Specification
 
 /**
  * BLParaのテスト。
- * @version 1.0.00 2017/08/03
+ * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')
 class BLParaSpec extends Specification {
-	def 'コンストラクタ'(){
+	def 'BLPara'(){
 		given:
-		BLPara para;
+		BLPara para
 		
 		when:
-		para = new BLPara(1);
+		para = new BLPara(1)
 		then:
-		para.tag == '';
+		para.tag == ''
 	}
 	
-	def '属性リストを返します'(){
+	def 'getAttrs'(){
 		given:
-		BLPara para;
+		BLPara para
 		
 		when:
-		para = new BLPara(1);
+		para = new BLPara(1)
 		then:
-		para.attrs == null;
+		para.attrs == null
 	}
 	
-	def '文字列表現を返します'(){
+	def 'toString'(){
 		given:
-		BLPara para;
-		BLLine line1 = new BLLine(1);
-		BLLine line2 = new BLLine(1);
-		BLText text1 = new BLText('テキスト１', 1);
-		BLText text2 = new BLText('テキスト２', 1);
+		BLPara para
+		BLLine line1 = new BLLine(1)
+		BLLine line2 = new BLLine(1)
+		BLText text1 = new BLText('テキスト１', 1)
+		BLText text2 = new BLText('テキスト２', 1)
 		
 		when:
-		para = new BLPara(1);
-		line1 << text1;
-		line2 << text2;
-		para << line1;
-		para << line2;
+		para = new BLPara(1)
+		line1 << text1
+		line2 << text2
+		para << line1
+		para << line2
 		then:
-		para.toString() == "テキスト１\nテキスト２";
+		para.toString() == "テキスト１\nテキスト２"
 	}
 }

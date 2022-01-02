@@ -3,23 +3,22 @@
  *
  * Copyright (C) io.github.longfish801 All Rights Reserved.
  */
-package io.github.longfish801.bltxt.node;
+package io.github.longfish801.bltxt.node
 
-import groovy.util.logging.Slf4j;
-import groovy.xml.MarkupBuilder;
-import io.github.longfish801.shared.ArgmentChecker;
+import groovy.util.logging.Slf4j
+import groovy.xml.MarkupBuilder
 
 /**
  * BLtxt文書の平文です。
- * @version 1.0.00 2017/08/02
+ * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')
 class BLText extends BLNode {
 	/** XMLとしてのタグ名 */
-	static String xmlTag = 'text';
+	static String xmlTag = 'text'
 	/** 平文 */
-	String text = null;
+	String text = null
 	
 	/**
 	 * コンストラクタ。
@@ -27,9 +26,8 @@ class BLText extends BLNode {
 	 * @param lineNo 行番号
 	 */
 	BLText(String text, int lineNo){
-		ArgmentChecker.checkNotEmpty('平文', text);
-		this.text = text;
-		this.lineNo = lineNo;
+		this.text = text
+		this.lineNo = lineNo
 	}
 	
 	/**
@@ -38,7 +36,7 @@ class BLText extends BLNode {
 	 */
 	@Override
 	BLAttrs<String> getAttrs(){
-		return null;
+		return null
 	}
 	
 	/**
@@ -47,7 +45,7 @@ class BLText extends BLNode {
 	 */
 	@Override
 	List<BLNode> getNodes(){
-		return null;
+		return null
 	}
 	
 	/**
@@ -58,25 +56,24 @@ class BLText extends BLNode {
 	 */
 	@Override
 	BLNode leftShift(BLNode subNode){
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException()
 	}
 	
 	/** {@inheritDoc} */
 	@Override
 	String toString(){
-		return escape(text);
+		return escape(text)
 	}
 	
 	/**
-	 * BLtxt記法上エスケープが必要な文字があればエスケープします。
+	 * bltxt記法上エスケープが必要な文字があればエスケープします。
 	 * @param text エスケープ対象文字列
 	 * @return エスケープ後の文字列
 	 */
 	static String escape(String text){
-		if (text.indexOf('￥') >= 0) text = text.replaceAll('￥', '￥￥');
-		if (text.indexOf('【') >= 0) text = text.replaceAll('【', '￥【');
-		if (text.indexOf('】') >= 0) text = text.replaceAll('】', '￥】');
-		return text;
+		if (text.indexOf('【') >= 0) text = text.replaceAll('【', '【＿')
+		if (text.indexOf('】') >= 0) text = text.replaceAll('】', '＿】')
+		return text
 	}
 	
 	/**

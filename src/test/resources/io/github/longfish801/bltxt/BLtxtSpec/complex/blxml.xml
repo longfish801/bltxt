@@ -569,7 +569,7 @@
   <block tag="生データ" lnum="172" snum="1">
     <para lnum="172" snum="53">
       <line lnum="173">
-        <text>&lt;p&gt;墨付きカッコが【強調：そのまま】表示されます。&lt;br&gt;</text>
+        <text>&lt;p&gt;墨付きカッコが【強調＿：そのまま】表示されます。&lt;br&gt;</text>
       </line>
       <line lnum="174">
         <text>&lt;big&gt;HTMLタグのエスケープもしません。&lt;/big&gt;←しないからこそ大きく見えるはず。&lt;/p&gt;</text>

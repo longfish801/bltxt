@@ -13,24 +13,34 @@ import org.slf4j.LoggerFactory;
 
 /**
  * BLtxt文書を解析します。
- * @version 1.0.00 2017/08/02
+ * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 public class BLtxtParser {
 	/** ログ出力インスタンス */
 	private static final Logger LOG = LoggerFactory.getLogger(BLtxtParser.class);
+	/** エスケープ表現と本来の値とのマップ */
+	private static Map<String, String> escMap;
 	/** BLtxtMakerIF */
 	private BLtxtMakerIF maker = null;
 	/** 行番号 */
 	private int lineNo = -1;
 	/** タグ外の文字列あるいは属性値 */
 	private StringBuilder buffer = null;
-
+	
+	static {
+		escMap = new HashMap<String, String>();
+		escMap.put("＿＿", "＿");
+		escMap.put("【＿", "【");
+		escMap.put("＿】", "】");
+		escMap.put("＿：", "：");
+	}
+	
 	/**
 	 * BLtxt文書を解析します。
 	 * @param maker BLtxtMakerIF
 	 * @return BLtxt文書の解析結果
-	 * @exception ParseException 対象文字列がBLtxt記法に違反しています。
+	 * @exception ParseException 対象文字列がbltxt記法に違反しています。
 	 */
 	public Object parse(BLtxtMakerIF maker) throws ParseException {
 		this.maker = maker;
@@ -56,7 +66,8 @@ PARSER_END(BLtxtParser)
 
 TOKEN : {
 	< NEWLINE	: "\r\n" | "\n" | "\r" >
-|	< ESCAPED	: "￥【" | "￥】" | "￥：" | "￥￥" >
+|	< ESC_TAG	: "＿＿" | "＿：" >
+|	< ESC_TXT	: "【＿" | "＿】" >
 |	< LRNG_BGN	: "【－" >
 |	< LRNG_END	: "－】" >
 |	< SRNG_BGN	: "【｜" >
@@ -68,8 +79,9 @@ TOKEN : {
 |	< TAG_BGN	: "【" >
 |	< TAG_END	: "】" >
 |	< SIGN_ATTR	: "：" >
-|	< SIGN_KIND	: "－" | "｜" | "＝" | "＃" | "＊" >
-|	< SAFE_TXT	: (~[ "\n", "\r", "￥", "：", "【", "】", "－", "｜", "＝", "＃", "＊" ])+ >
+|	< SIGN_ESC	: "＿" >
+|	< NOESC_TAG	: "－" | "｜" | "＝" | "＃" | "＊" >
+|	< SAFE_TXT	: (~[ "\n", "\r", "＿", "【", "】", "：", "－", "｜", "＊", "＝", "＃" ])+ >
 }
 
 	/**
@@ -373,7 +385,7 @@ TOKEN : {
 	void attrValChoice() : {
 	}
 {
-	( escaped() | signKind() | safeTxt() )
+	( escapedInTag() | escapedInText() | noEscapeInTag() | safeTxt() )
 }
 
 	/**
@@ -398,26 +410,70 @@ TOKEN : {
 	void plainTextChoice() : {
 	}
 {
-	( escaped() | signKind() | signAttr() | safeTxt() )
+	( escapedInText() | noNeedEscape() | noEscapeInTag() | signAttr() | signEsc() | safeTxt() )
 }
 
 	/**
-	 * エスケープ文字列を解析します。
+	 * タグ内のみのエスケープ文字列を解析します。
 	 * @exception ParseException 対象文字列がBLxml形式に違反しています。
 	 */
-	void escaped() : {
+	void escapedInTag() : {
 		Token token;
 	}
 {
-	token = <ESCAPED>
+	token = <ESC_TAG>
 	{
-		LOG.trace("escape token={}", token.image);
-		buffer.append(token.image.substring(1));
+		LOG.trace("escape in tag token={}", token.image);
+		buffer.append(escMap.get(token.image));
 	}
 }
 
 	/**
-	 * 属性値区切りを表す文字を解析します。
+	 * 平文ではエスケープ不要な文字列を解析します。
+	 * @exception ParseException 対象文字列がBLxml形式に違反しています。
+	 */
+	void noNeedEscape() : {
+		Token token;
+	}
+{
+	token = <ESC_TAG>
+	{
+		LOG.trace("escape in tag token={}", token.image);
+		buffer.append(token.image);
+	}
+}
+
+	/**
+	 * タグ内、平文内のエスケープ文字列を解析します。
+	 * @exception ParseException 対象文字列がBLxml形式に違反しています。
+	 */
+	void escapedInText() : {
+		Token token;
+	}
+{
+	token = <ESC_TXT>
+	{
+		LOG.trace("escape in text token={}", token.image);
+		buffer.append(escMap.get(token.image));
+	}
+}
+
+	/**
+	 * 平文およびタグ内でエスケープ不要な特殊記号を解析します。
+	 * @exception ParseException 対象文字列がBLxml形式に違反しています。
+	 */
+	void noEscapeInTag() : {
+		Token token;
+	}
+{
+	token = <NOESC_TAG>
+	{
+		buffer.append(token.image);
+	}
+}
+
+	/**
+	 * 属性の区切り記号を解析します。
 	 * @exception ParseException 対象文字列がBLxml形式に違反しています。
 	 */
 	void signAttr() : {
@@ -431,14 +487,14 @@ TOKEN : {
 }
 
 	/**
-	 * タグ種別を表す文字を解析します。
+	 * エスケープ記号を解析します。
 	 * @exception ParseException 対象文字列がBLxml形式に違反しています。
 	 */
-	void signKind() : {
+	void signEsc() : {
 		Token token;
 	}
 {
-	token = <SIGN_KIND>
+	token = <SIGN_ESC>
 	{
 		buffer.append(token.image);
 	}
