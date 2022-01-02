@@ -1,51 +1,175 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>bltxt</title>
-<link href="/bltxt/_asset/style.css" rel="stylesheet">
-<script src="/bltxt/_asset/script.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+JP:400,700&amp;subset=japanese">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+<style type="text/css">
+<!--
+body {
+	font-family: 'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Hiragino Sans',Meiryo,sans-serif;
+	letter-spacing: 0.05rem;
+	line-height: 2.3rem;
+	text-align: justify;
+	word-wrap: break-word;
+}
+h1, h2 {
+	margin-top: 1rem;
+}
+div.container {
+	margin-bottom: 3rem;
+}
+pre {
+	padding: 0.5rem;
+	line-height: 1.3rem;
+	background-color: oldlace;
+}
+th, td {
+	border: solid 1px black;
+	padding: 0rem 0.5rem;
+}
+th {
+	text-align: center;
+}
+.navi {
+	text-align: right;
+}
+-->
+</style>
+<script>
+<!--
+function backPage(){
+	let url = window.location.href;
+	window.location.href = (url.endsWith('/') || url.endsWith('index.html'))? '..' : 'index.html';
+}
+// -->
+</script>
+<title> bltxt</title>
 </head>
 <body>
 
-<header class="container">
-<h1>bltxt</h1>
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-lg-9">
 
-<nav class="list-group">
-<a href="#id2_1" class="list-group-item">概要</a>
-<a href="#id2_2" class="list-group-item">ドキュメント</a>
-<a href="#id2_3" class="list-group-item">API仕様書</a>
-</nav>
-</header>
-
-<article class="container">
-<h2><a name="id2_1"></a>概要</h2>
-
-<p>　テキストをBLtxt文書に変換します。<br/>
-　BLtxt文書は、テキストをXMLのような階層関係がある構造へ変換したものです。</p>
-
-<h2><a name="id2_2"></a>ドキュメント</h2>
-
+<h1><a href="#bltxt" id="bltxt"></a>bltxt</h1>
 <ul>
-<li><a href="bltxt.html">BLtxt記法</a></li>
+<li><a href="#概要">概要</a></li>
+<li><a href="#特徴">特徴</a></li>
+<li><a href="#サンプルコード">サンプルコード</a></li>
+<li><a href="#ドキュメント">ドキュメント</a></li>
+<li><a href="#githubリポジトリ">GitHubリポジトリ</a></li>
+<li><a href="#mavenリポジトリ">Mavenリポジトリ</a></li>
 </ul>
+<h2><a href="#概要" id="概要"></a>概要</h2>
+<p>　テキストを構造化します。<br />
+　独自の形式のタグで階層的な構造があるテキストを表現できます。</p>
+<p>　個人が学習のために開発したものです。<br />
+　故障対応や問合せ回答などのサポートはしていません。</p>
+<h2><a href="#特徴" id="特徴"></a>特徴</h2>
+<ul>
+<li>XMLやHTMLと考え方は同じです。<br />
+タグを全角記号で記述するため、半角記号を用いるXMLやHTMLより入力が容易です。</li>
+<li>全角隅付き括弧（【、】）でタグを記述します。<br />
+タグには全角コロン（：）区切りで属性を指定します。</li>
+<li>XML形式に変換できます。</li>
+</ul>
+<p>　このライブラリの名称はタグに隅付き括弧(Black Lenticular bracket)を用いることに由来しています。</p>
+<h2><a href="#サンプルコード" id="サンプルコード"></a>サンプルコード</h2>
+<p>　以下にテキストをbltxt文書に変換するスクリプトのサンプルを示します（src/test/groovy/Sample.groovy）。</p>
+<pre><code>import io.github.longfish801.bltxt.BLtxt
 
-<h2><a name="id2_3"></a>API仕様書</h2>
+try {
+	BLtxt bltxt = new BLtxt(new File('src/test/resources/target.txt'))
+	assert bltxt.toXml() == new File('src/test/resources/result.xml').getText('UTF-8')
+} catch (exc){
+	exc.printStackTrace()
+}
+</code></pre>
+<p>　以下は変換対象のテキストです（src/test/resources/target.txt）。</p>
+<pre><code>【＃タイトル】bltxt記法について
 
-<p>　API仕様書(Groovydoc)は以下を参照してください。</p>
+　テキストをXMLのような階層のある構造へ変換するための記法です。
+　タグ付けのために隅付き括弧（【＿、＿】）を使います。
 
+　以下は文範囲タグのサンプルです。
+
+【－囲み記事】
+　海の日、山の日に続いて【｜強調】空の日【強調｜】という祝日はどうだろう。
+【囲み記事－】
+</code></pre>
+<p>　テキストをbltxt文書に変換し、XML形式で出力した結果です（src/test/resources/result.xml）。</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;bltxt&gt;
+  &lt;meta tag=&quot;タイトル&quot; lnum=&quot;2&quot; snum=&quot;1&quot;&gt;
+    &lt;para lnum=&quot;2&quot; snum=&quot;1&quot;&gt;
+      &lt;line lnum=&quot;2&quot;&gt;
+        &lt;text&gt;bltxt記法について&lt;/text&gt;
+      &lt;/line&gt;
+    &lt;/para&gt;
+  &lt;/meta&gt;
+  &lt;para lnum=&quot;4&quot; snum=&quot;2&quot;&gt;
+    &lt;line lnum=&quot;4&quot;&gt;
+      &lt;text&gt;　テキストをXMLのような階層のある構造へ変換するための記法です。&lt;/text&gt;
+    &lt;/line&gt;
+    &lt;line lnum=&quot;5&quot;&gt;
+      &lt;text&gt;　タグ付けのために隅付き括弧（【、】）を使います。&lt;/text&gt;
+    &lt;/line&gt;
+  &lt;/para&gt;
+  &lt;para lnum=&quot;7&quot; snum=&quot;3&quot;&gt;
+    &lt;line lnum=&quot;7&quot;&gt;
+      &lt;text&gt;　以下は文範囲タグのサンプルです。&lt;/text&gt;
+    &lt;/line&gt;
+  &lt;/para&gt;
+  &lt;block tag=&quot;囲み記事&quot; lnum=&quot;9&quot; snum=&quot;1&quot;&gt;
+    &lt;para lnum=&quot;9&quot; snum=&quot;4&quot;&gt;
+      &lt;line lnum=&quot;10&quot;&gt;
+        &lt;text&gt;　海の日、山の日に続いて&lt;/text&gt;
+        &lt;inline tag=&quot;強調&quot; lnum=&quot;10&quot; snum=&quot;1&quot;&gt;
+          &lt;text&gt;空の日&lt;/text&gt;
+        &lt;/inline&gt;
+        &lt;text&gt;という祝日はどうだろう。&lt;/text&gt;
+      &lt;/line&gt;
+    &lt;/para&gt;
+  &lt;/block&gt;
+&lt;/bltxt&gt;
+</code></pre>
+<p>　このサンプルコードは build.gradle内の execSamplesタスクで実行しています。</p>
+<h2><a href="#ドキュメント" id="ドキュメント"></a>ドキュメント</h2>
 <ul>
 <li><a href="groovydoc/">Groovydoc</a></li>
+<li><a href="notation.html">bltxt記法</a></li>
 </ul>
+<h2><a href="#githubリポジトリ" id="githubリポジトリ"></a>GitHubリポジトリ</h2>
+<ul>
+<li><a href="https://github.com/longfish801/bltxt">bltxt</a></li>
+</ul>
+<h2><a href="#mavenリポジトリ" id="mavenリポジトリ"></a>Mavenリポジトリ</h2>
+<p>　本ライブラリの JARファイルを <a href="https://github.com/longfish801/maven">GitHub上の Mavenリポジトリ</a>で公開しています。<br />
+　build.gradleの記述例を以下に示します。</p>
+<pre><code>repositories {
+	mavenCentral()
+	maven { url 'https://longfish801.github.io/maven/' }
+}
 
-<p>以上</p>
-</article>
+dependencies {
+	implementation group: 'io.github.longfish801', name: 'bltxt', version: '0.3.00'
+}
+</code></pre>
 
-<footer class="container">
-<a href="..">戻る</a>
-</footer>
+<hr/>
+
+<div class="navi"><button type="button" class="btn btn-primary" onclick="backPage();">戻る</button></div>
+
+</div><!-- end of col -->
+</div><!-- end of row -->
+</div><!-- end of container -->
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 </body>
 </html>

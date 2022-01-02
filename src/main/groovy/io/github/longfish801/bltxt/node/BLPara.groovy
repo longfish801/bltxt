@@ -3,20 +3,19 @@
  *
  * Copyright (C) io.github.longfish801 All Rights Reserved.
  */
-package io.github.longfish801.bltxt.node;
+package io.github.longfish801.bltxt.node
 
-import groovy.util.logging.Slf4j;
-import io.github.longfish801.shared.ArgmentChecker;
+import groovy.util.logging.Slf4j
 
 /**
  * BLtxt文書の段落要素です。
- * @version 1.0.00 2017/08/02
+ * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')
 class BLPara extends BLBlock {
 	/** XMLとしてのタグ名 */
-	static String xmlTag = 'para';
+	static String xmlTag = 'para'
 	/** 下位要素として可能なクラスの候補 */
 	static validLowerClasses = [ BLLine.class ];
 	

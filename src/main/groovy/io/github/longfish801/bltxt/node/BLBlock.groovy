@@ -3,22 +3,21 @@
  *
  * Copyright (C) io.github.longfish801 All Rights Reserved.
  */
-package io.github.longfish801.bltxt.node;
+package io.github.longfish801.bltxt.node
 
-import groovy.util.logging.Slf4j;
-import io.github.longfish801.shared.ArgmentChecker;
+import groovy.util.logging.Slf4j
 
 /**
  * BLtxt文書のブロック要素です。
- * @version 1.0.00 2017/08/02
+ * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')
 class BLBlock extends BLNode {
 	/** XMLとしてのタグ名 */
-	static String xmlTag = 'block';
+	static String xmlTag = 'block'
 	/** 下位要素として可能なクラスの候補 */
-	static validLowerClasses = [ BLBlock.class, BLPara.class, BLMeta.class ];
+	static validLowerClasses = [ BLBlock.class, BLPara.class, BLMeta.class ]
 	
 	/**
 	 * コンストラクタ。<br>
@@ -34,9 +33,8 @@ class BLBlock extends BLNode {
 	 * @param lineNo 行番号
 	 */
 	BLBlock(String tag, int lineNo){
-		ArgmentChecker.checkMatchRex('タグ', tag, /[^￥：【】＝－｜＃＊]+/);
-		this.tag = tag;
-		this.lineNo = lineNo;
+		this.tag = tag
+		this.lineNo = lineNo
 	}
 	
 	/**
@@ -45,7 +43,7 @@ class BLBlock extends BLNode {
 	 * @return 単一か否か
 	 */
 	boolean isSingle(){
-		return (nodes.size() == 0 || (nodes.size() == 1 && nodes.first() instanceof BLPara && nodes.first().nodes.size() == 1))? true : false;
+		return (nodes.size() == 0 || (nodes.size() == 1 && nodes.first() instanceof BLPara && nodes.first().nodes.size() == 1))? true : false
 	}
 	
 	/**
@@ -56,19 +54,19 @@ class BLBlock extends BLNode {
 	 * @see #isSingle()
 	 */
 	BLNode getSingleNode(){
-		return nodes.first()?.nodes.first();
+		return nodes.first()?.nodes.first()
 	}
 	
 	/** {@inheritDoc} */
 	@Override
 	String toString(){
-		String result = null;
-		String cont = nodes.collect { it.toString() }.join("\n");
+		String result = null
+		String cont = nodes.collect { it.toString() }.join("\n")
 		if (isSingle()){
-			result = "【＝${tag}${attrs.toString()}】${cont}";
+			result = "【＝${tag}${attrs.toString()}】${cont}"
 		} else {
-			result = "【－${tag}${attrs.toString()}】\n${cont}\n【${tag}－】";
+			result = "【－${tag}${attrs.toString()}】\n${cont}\n【${tag}－】"
 		}
-		return result;
+		return result
 	}
 }

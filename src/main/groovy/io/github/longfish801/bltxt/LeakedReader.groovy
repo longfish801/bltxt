@@ -1,23 +1,20 @@
 /*
- * Clmap.groovy
+ * LeakedReader.groovy
  *
  * Copyright (C) io.github.longfish801 All Rights Reserved.
  */
-package io.github.longfish801.bltxt.io;
-
-import groovy.util.logging.Slf4j;
+package io.github.longfish801.bltxt
 
 /**
  * 読みだした文字列のコピーを出力するReaderです。
- * @version 1.0.00 2018/01/21
+ * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
-@Slf4j('LOG')
 class LeakedReader extends Reader {
 	/** Reader */
-	Reader reader = null;
+	Reader reader = null
 	/** Writer */
-	Writer writer = null;
+	Writer writer = null
 	
 	/**
 	 * コンストラクタ。<br/>
@@ -26,8 +23,8 @@ class LeakedReader extends Reader {
 	 * @param writer Writer
 	 */
 	LeakedReader(Reader reader, Writer writer){
-		this.reader = reader;
-		this.writer = writer;
+		this.reader = reader
+		this.writer = writer
 	}
 	
 	/**
@@ -39,12 +36,12 @@ class LeakedReader extends Reader {
 	 */
 	@Override
 	int read(char[] cbuf, int off, int len){
-		int ret = reader.read(cbuf, off, len);
+		int ret = reader.read(cbuf, off, len)
 		if (ret > 0){
-			int endIdx = (off + ret > cbuf.length)? cbuf.length : off + ret;
-			writer.write(new String(Arrays.copyOfRange(cbuf, off, endIdx)));
+			int endIdx = (off + ret > cbuf.length)? cbuf.length : off + ret
+			writer.write(new String(Arrays.copyOfRange(cbuf, off, endIdx)))
 		}
-		return ret;
+		return ret
 	}
 	
 	/**
@@ -52,7 +49,7 @@ class LeakedReader extends Reader {
 	 */
 	@Override
 	void close(){
-		writer.close();
-		reader.close();
+		writer.close()
+		reader.close()
 	}
 }

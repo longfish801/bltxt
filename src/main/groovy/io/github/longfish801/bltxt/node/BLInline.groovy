@@ -3,22 +3,21 @@
  *
  * Copyright (C) io.github.longfish801 All Rights Reserved.
  */
-package io.github.longfish801.bltxt.node;
+package io.github.longfish801.bltxt.node
 
-import groovy.util.logging.Slf4j;
-import io.github.longfish801.shared.ArgmentChecker;
+import groovy.util.logging.Slf4j
 
 /**
  * BLtxt文書のインライン要素です。
- * @version 1.0.00 2017/08/02
+ * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')
 class BLInline extends BLNode {
 	/** XMLとしてのタグ名 */
-	static String xmlTag = 'inline';
+	static String xmlTag = 'inline'
 	/** 下位要素として可能なクラスの候補 */
-	static validLowerClasses = [ BLInline.class, BLText.class ];
+	static validLowerClasses = [ BLInline.class, BLText.class ]
 	
 	/**
 	 * コンストラクタ。
@@ -26,21 +25,20 @@ class BLInline extends BLNode {
 	 * @param lineNo 行番号
 	 */
 	BLInline(String tag, int lineNo){
-		ArgmentChecker.checkMatchRex('タグ', tag, /[^￥：【】＝－｜＃＊]+/);
-		this.tag = tag;
-		this.lineNo = lineNo;
+		this.tag = tag
+		this.lineNo = lineNo
 	}
 	
 	/** {@inheritDoc} */
 	@Override
 	String toString(){
-		String result = null;
+		String result = null
 		if (nodes.size() == 0){
-			result = "【${tag}${attrs.toString()}】";
+			result = "【${tag}${attrs.toString()}】"
 		} else {
-			String cont = nodes.collect { it.toString() }.join();
-			result = "【｜${tag}${attrs.toString()}】${cont}【${tag}｜】";
+			String cont = nodes.collect { it.toString() }.join()
+			result = "【｜${tag}${attrs.toString()}】${cont}【${tag}｜】"
 		}
-		return result;
+		return result
 	}
 }
