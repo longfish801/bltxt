@@ -93,5 +93,5 @@ This sample code is executed in the execSamples task, see build.gradle.
 
 ## Next Step
 
-Please see the [documents](https://longfish801.github.io/bltxt/) for more detail.
+Please see the [documents](https://longfish801.github.io/maven/bltxt/) for more detail.
 

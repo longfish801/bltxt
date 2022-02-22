@@ -115,3 +115,8 @@ dependencies {
 	implementation group: 'io.github.longfish801', name: 'bltxt', version: '0.3.00'
 }
 ```
+
+## 改版履歴
+
+0.2.01
+: ドキュメントはmavenリポジトリに出力するよう修正しました。
