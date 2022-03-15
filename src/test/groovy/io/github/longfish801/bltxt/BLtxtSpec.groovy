@@ -67,21 +67,26 @@ class BLtxtSpec extends Specification {
 		'valiation'	| '03'
 	}
 	
-	def 'parse, toXml - complex'(){
+	def 'parse, toXml, grepNodes - complex'(){
 		// Unrollで実行すると OutOfMemoryErrorが発生するため、独立して実施します。
 		given:
+		BLtxt bltxt
 		String text
 		String result
 		String expected
 		
 		when:
 		text = new File(testDir, 'complex/blxml.txt').getText()
-		result = new BLtxt(text).toXml()
+		bltxt = new BLtxt(text)
+		result = bltxt.toXml()
 		expected = new File(testDir, 'complex/blxml.xml').getText()
 		LOG.debug('result=[{}]', result)
 		
 		then:
 		result == expected
+		bltxt.grepNodes('block', '見出し').size() == 4
+		bltxt.grepNodes('block', 'noSuch').size() == 0
+		bltxt.grepNodes('noSuch', '見出し').size() == 0
 	}
 	
 	def 'createErrorMessageDetail'(){

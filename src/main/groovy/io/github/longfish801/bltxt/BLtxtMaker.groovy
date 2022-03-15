@@ -257,7 +257,7 @@ class BLtxtMaker implements BLtxtMakerIF {
 			if (para.nodes.size() == 0) para.parent.nodes.removeLast()
 		} else {
 			String blockLevelStatus = blockLevels.collect { "${it.class.simpleName}#${it.tag}" }.join(', ')
-			LOG.debug('*closePara blockLevels={}', blockLevelStatus)
+			LOG.trace('*closePara blockLevels={}', blockLevelStatus)
 		}
 	}
 	

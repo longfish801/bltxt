@@ -150,19 +150,19 @@ class BLtxt {
 	/**
 	 * XMLタグ名に対応する、タグ名別のノード一覧を返します。
 	 * @param XMLタグ名
-	 * @return タグ名別のノード一覧
+	 * @return タグ名別のノード一覧（対応するノード一覧が無い場合は空マップ）
 	 */
 	Map<String, List<BLNode>> grepNodes(String xmlTag){
-		return root.index[xmlTag]
+		return root.index[xmlTag] ?: [:]
 	}
 	
 	/**
 	 * XMLタグ名とタグ名に対応する、ノード一覧を返します。
 	 * @param XMLタグ名
 	 * @param タグ名
-	 * @return ノード一覧
+	 * @return ノード一覧（対応するノード一覧が無い場合は空リスト）
 	 */
 	List<BLNode> grepNodes(String xmlTag, String tag){
-		return grepNodes(xmlTag)?.get(tag)
+		return grepNodes(xmlTag).get(tag) ?: []
 	}
 }

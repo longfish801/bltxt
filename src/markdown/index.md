@@ -31,7 +31,8 @@ try {
 	BLtxt bltxt = new BLtxt(new File('src/test/resources/target.txt'))
 	assert bltxt.toXml() == new File('src/test/resources/result.xml').getText('UTF-8')
 } catch (exc){
-	exc.printStackTrace()
+	println "Failed to convert: ${exc.message}"
+	throw exc
 }
 ```
 
@@ -120,3 +121,6 @@ dependencies {
 
 0.2.01
 : ドキュメントはmavenリポジトリに出力するよう修正しました。
+
+0.2.02
+: BLtxtクラスのgrepNodesメソッドについて引数に対応する値がないときの戻り値を変更しました。
