@@ -7,7 +7,6 @@ package io.github.longfish801.bltxt;
 
 /**
  * BLtxt文書の変換に用いるインタフェースです。
- * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 public interface BLtxtMakerIF {

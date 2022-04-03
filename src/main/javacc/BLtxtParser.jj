@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * BLtxt文書を解析します。
- * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 public class BLtxtParser {

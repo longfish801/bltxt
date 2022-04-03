@@ -1,4 +1,4 @@
-﻿# bltxt
+# bltxt
 
 ## Overview
 
@@ -31,7 +31,8 @@ try {
 	BLtxt bltxt = new BLtxt(new File('src/test/resources/target.txt'))
 	assert bltxt.toXml() == new File('src/test/resources/result.xml').getText('UTF-8')
 } catch (exc){
-	exc.printStackTrace()
+	println "Failed to convert: ${exc.message}"
+	throw exc
 }
 ```
 
@@ -93,5 +94,5 @@ This sample code is executed in the execSamples task, see build.gradle.
 
 ## Next Step
 
-Please see the [documents](https://longfish801.github.io/bltxt/) for more detail.
+Please see the [documents](https://longfish801.github.io/maven/bltxt/) for more detail.
 

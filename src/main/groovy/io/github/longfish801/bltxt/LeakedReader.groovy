@@ -7,7 +7,6 @@ package io.github.longfish801.bltxt
 
 /**
  * 読みだした文字列のコピーを出力するReaderです。
- * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 class LeakedReader extends Reader {
