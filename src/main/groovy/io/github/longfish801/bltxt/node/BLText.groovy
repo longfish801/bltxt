@@ -10,7 +10,6 @@ import groovy.xml.MarkupBuilder
 
 /**
  * BLtxt文書の平文です。
- * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')

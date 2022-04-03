@@ -19,7 +19,6 @@ import java.util.regex.Matcher
 
 /**
  * BLtxt文書です。
- * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')

@@ -9,7 +9,6 @@ import groovy.transform.InheritConstructors
 
 /**
  * BLtxt文書の解析失敗を表す例外です。
- * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @InheritConstructors

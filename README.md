@@ -1,4 +1,4 @@
-﻿# bltxt
+# bltxt
 
 ## Overview
 

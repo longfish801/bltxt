@@ -9,7 +9,6 @@ import io.github.longfish801.gonfig.Gonfig
 
 /**
  * メッセージを保持します。
- * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 class BLtxtMsg implements Gonfig {

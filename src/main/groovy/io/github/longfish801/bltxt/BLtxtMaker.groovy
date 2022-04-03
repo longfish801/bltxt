@@ -20,7 +20,6 @@ import io.github.longfish801.bltxt.parser.ParseException
  * bltxt記法の文字列の解析にともない、各要素を生成します。<br>
  * 解析は io.github.longfish801.bltxt.parser.BLtxtParserで実施します。<br>
  * BLtxt文書のインスタンスを生成したい場合は{@link BLtxt}を参照してください。
- * @version 0.3.00 2021/12/29
  * @author io.github.longfish801
  */
 @Slf4j('LOG')
