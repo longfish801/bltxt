@@ -68,6 +68,42 @@ abstract class BLNode {
 	}
 	
 	/**
+	 * 条件を満たすノードをひとつ返します。<br/>
+	 * 引数に指定したクロージャで条件を満たすか判定します。<br/>
+	 * このクロージャには引数として各ノードを渡します。<br/>
+	 * 条件を満たすなら trueを、そうでなければ falseを返してください。<br/>
+	 * まず自ノードが条件を満たすか試します。<br/>
+	 * もし満たさなければ下位のノードを再帰的に試します。
+	 * @param clos 条件を満たすか判定するためのクロージャ
+	 * @return 条件を満たすノード（条件を満たすノードがなければnull）
+	 */
+	BLNode find(Closure clos){
+		if (clos.call(this)) return this
+		for (node in blNodes){
+			def finded = node.find(clos)
+			if (finded != null) return finded
+		}
+		return null
+	}
+	
+	/**
+	 * 条件を満たすノードをすべて返します。<br/>
+	 * 引数に指定したクロージャで条件を満たすか判定します。<br/>
+	 * このクロージャには引数として各ノードを渡します。<br/>
+	 * 条件を満たすなら trueを、そうでなければ falseを返してください。<br/>
+	 * まず自ノードが条件を満たすか試します。<br/>
+	 * もし満たさなければ下位のノードを再帰的に試します。
+	 * @param clos 条件を満たすか判定するためのクロージャ
+	 * @return 条件を満たすノードのリスト（条件を満たすノードがなければ空リスト）
+	 */
+	List<BLNode> findAll(Closure clos){
+		List nodes = []
+		if (clos.call(this)) nodes << this
+		blNodes.each { nodes.addAll(it.findAll(clos)) }
+		return nodes
+	}
+	
+	/**
 	 * XML形式で表現した文字列を返します。
 	 * @return XML形式で表現した文字列
 	 */
