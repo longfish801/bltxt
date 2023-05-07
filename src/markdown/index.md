@@ -131,3 +131,5 @@ dependencies {
 1.1.01
 : BLNodeクラスにfindメソッド、findAllメソッドを追加しました。
 
+1.2.01
+: BLNodeクラスにgetRootメソッドを追加しました。
