@@ -38,6 +38,14 @@ abstract class BLNode {
 	}
 	
 	/**
+	 * ルート要素を返します。
+	 * @return ルート要素
+	 */
+	BLRoot getRoot(){
+		return (parent != null)? parent.root : this
+	}
+	
+	/**
 	 * 下位ノードリストを返します。
 	 * @return 下位ノードリスト
 	 */
